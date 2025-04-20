@@ -8,13 +8,14 @@ services:
         USER_ID: ${USER_ID:-1000}
         GROUP_ID: ${GROUP_ID:-1000}
         USERNAME: makin
-    image: vitis-ubuntu20.04
-    container_name: vitis-dev
+    image: vitis20img
+    container_name: vitis20
     environment:
       - DISPLAY=${DISPLAY}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
       - $HOME/.Xauthority:/home/makin/.Xauthority:ro
+      - ./sys/etc/apt:/etc/apt
       - ./sys/opt/shared:/opt/shared
       - ./sys/opt/master:/opt/master
       - ./sys/home/makin:/home/makin
@@ -22,6 +23,9 @@ services:
       - /dev/bus/usb:/dev/bus/usb
     security_opt:
       - label=type:container_runtime_t
-    userns_mode: "keep-id"
+    # userns_mode: "keep-id"
     working_dir: /home/makin
-    command: bash
+    # command: bash
+    command: tail -f /dev/null  # Keep container running
+
+

@@ -23,8 +23,20 @@ RUN apt-get update && apt-get install -y \
     xauth \
     x11-apps \
     dbus-x11 \
-    locales \
-    && rm -rf /var/lib/apt/lists/*
+    locales
+
+
+#install any other package that i need
+RUN apt install -y \
+    openssh-server \
+    tmux \
+    ncdu \
+    pcmanfm \
+    vim
+
+# clean up apt
+RUN rm -rf /var/lib/apt/lists/*
+
 
 # Set up locale
 RUN locale-gen en_US.UTF-8
@@ -35,7 +47,7 @@ ENV LC_ALL en_US.UTF-8
 # Create a user with the same name and ID as the host user for better file permissions
 ARG USER_ID=1000
 ARG GROUP_ID=1000
-ARG USERNAME=ubuntu
+ARG USERNAME=makin
 
 RUN groupadd -g $GROUP_ID $USERNAME && \
     useradd -m -u $USER_ID -g $GROUP_ID -s /bin/bash $USERNAME && \
@@ -49,6 +61,11 @@ USER $USERNAME
 
 # Set display for GUI applications
 ENV DISPLAY=:0
+
+# Add udev rules for FPGA devices (example for Xilinx devices)
+# RUN echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="03fd", ATTRS{idProduct}=="0008", MODE="0666"' | sudo tee /etc/udev/rules.d/99-xilinx.rules && \
+#     echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="03fd", ATTRS{idProduct}=="0007", MODE="0666"' | sudo tee -a /etc/udev/rules.d/99-xilinx.rules && \
+#     echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="03fd", ATTRS{idProduct}=="0009", MODE="0666"' | sudo tee -a /etc/udev/rules.d/99-xilinx.rules
 
 # Set up a healthcheck
 HEALTHCHECK --interval=5m --timeout=3s \
