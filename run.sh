@@ -3,6 +3,9 @@
 # ensure x11 forwarding
 xhost +local:
 
+# match user id inside container
+export USER_ID=$(id -u)
+export GROUP_ID=$(id -g)
 
 # using podman compose:
 podman-compose build
