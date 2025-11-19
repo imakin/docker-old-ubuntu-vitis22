@@ -7,7 +7,7 @@ services:
       args:
         USER_ID: ${USER_ID:-1000}
         GROUP_ID: ${GROUP_ID:-1000}
-        USERNAME: makin
+        USERNAME: ${USERNAME}
     image: vitis22img
     container_name: vitis22
     network_mode: "host"
@@ -15,17 +15,17 @@ services:
       - DISPLAY=${DISPLAY}
     volumes:
       - /tmp/.X11-unix:/tmp/.X11-unix
-      - $HOME/.Xauthority:/home/makin/.Xauthority:ro
+      - $HOME/.Xauthority:/home/${USERNAME}/.Xauthority:ro
       - ./sys/etc/apt/sources.list.d:/etc/apt/sources.list.d
       - ./sys/etc/apt/sources.list:/etc/apt/sources.list
       - ./../shared:/opt/shared
-      - ./sys/home/makin:/home/makin
+      - ./sys/home/${USERNAME}:/home/${USERNAME}
     devices:
       - /dev/bus/usb:/dev/bus/usb
     security_opt:
       - label=type:container_runtime_t
     # userns_mode: "keep-id"
-    working_dir: /home/makin
+    working_dir: /home/${USERNAME}
     # command: bash
     command: tail -f /dev/null  # Keep container running
 
