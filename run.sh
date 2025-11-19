@@ -3,13 +3,16 @@
 # ensure x11 forwarding
 xhost +local:
 
+#start existing container
+podman-compose start
+
 # match user id inside container
 export USER_ID=$(id -u)
 export GROUP_ID=$(id -g)
 
 # using podman compose:
 podman-compose build
-# podman build --tag vitis20img -f Dockerfile
+# podman build --tag vitis22img -f Dockerfile
 
 podman-compose up -d
 
@@ -17,7 +20,7 @@ podman ps
 echo "sudah, habis ini bash"
 sleep 3
 
-podman exec -it vitis20 bash
+podman exec -it vitis22 bash
 # podman-compose run -d --rm \
 #   -e DISPLAY=$DISPLAY \
 #   -v /tmp/.X11-unix:/tmp/.X11-unix \

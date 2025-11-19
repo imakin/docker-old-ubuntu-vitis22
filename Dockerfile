@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu:22.04
 
 # Avoid interactive prompts during package installation
 ENV DEBIAN_FRONTEND=noninteractive
@@ -25,6 +25,25 @@ RUN apt-get update && apt-get install -y \
     dbus-x11 \
     locales
 
+RUN apt install -y file
+
+# Add these lines to your Dockerfile (before the final CMD)
+RUN apt-get update && apt-get install -y \
+    libgl1-mesa-glx \
+    libgl1-mesa-dri \
+    mesa-utils \
+    libxcb-xinerama0 \
+    libxcursor1 \
+    libxcomposite1 \
+    libxdamage1 \
+    libxfixes3 \
+    libxi6 \
+    libxrender1 \
+    libxtst6 \
+    libxrandr2 \
+    libasound2 \
+    at-spi2-core
+
 
 #install any other package that i need
 RUN apt install -y \
@@ -49,9 +68,9 @@ ARG USER_ID=1000
 ARG GROUP_ID=1000
 ARG USERNAME=makin
 
-RUN groupadd -g $GROUP_ID $USERNAME && \
-    useradd -m -u $USER_ID -g $GROUP_ID -s /bin/bash $USERNAME && \
-    echo "$USERNAME ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/$USERNAME
+RUN groupadd -g ${GROUP_ID} ${USERNAME} && \
+    useradd -m -u ${USER_ID} -g ${GROUP_ID} -s /bin/bash ${USERNAME} && \
+    echo "${USERNAME} ALL=(ALL) NOPASSWD:ALL" > /etc/sudoers.d/${USERNAME}
 
 # Set up working directory
 WORKDIR /home/$USERNAME
@@ -61,11 +80,6 @@ USER $USERNAME
 
 # Set display for GUI applications
 ENV DISPLAY=:0
-
-# Add udev rules for FPGA devices (example for Xilinx devices)
-# RUN echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="03fd", ATTRS{idProduct}=="0008", MODE="0666"' | sudo tee /etc/udev/rules.d/99-xilinx.rules && \
-#     echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="03fd", ATTRS{idProduct}=="0007", MODE="0666"' | sudo tee -a /etc/udev/rules.d/99-xilinx.rules && \
-#     echo 'SUBSYSTEM=="usb", ATTRS{idVendor}=="03fd", ATTRS{idProduct}=="0009", MODE="0666"' | sudo tee -a /etc/udev/rules.d/99-xilinx.rules
 
 # Set up a healthcheck
 HEALTHCHECK --interval=5m --timeout=3s \
